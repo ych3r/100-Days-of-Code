@@ -1,81 +1,75 @@
 import random
+from replit import clear
 
-cards = [
-    'A', 'A', 'A', 'A',
-    '2', '2', '2', '2',
-    '3', '3', '3', '3',
-    '4', '4', '4', '4',
-    '5', '5', '5', '5',
-    '6', '6', '6', '6',
-    '7', '7', '7', '7',
-    '8', '8', '8', '8',
-    '9', '9', '9', '9',
-    '10', '10', '10', '10',
-    'J', 'J', 'J', 'J',
-    'Q', 'Q', 'Q', 'Q',
-    'K', 'K', 'K', 'K'
-    ]
-value = {
-    'A': 11, 
-    '2': 2, 
-    '3': 3, 
-    '4': 4,
-    '5': 5, 
-    '6': 6, 
-    '7': 7, 
-    '8': 8,
-    '9': 9, 
-    '10': 10, 
-    'J': 10, 
-    'Q': 10, 
-    'K': 10
-}
+def deal_card():
+  """Returns a random card from the deck."""
+  cards = [11, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10]
+  card = random.choice(cards)
+  return card
 
-def bj():
-    random.shuffle(cards)
-    banker = []
-    player = []
-    banker.append(cards.pop(0))
-    player.append(cards.pop(0))
-    banker.append(cards.pop(0))
-    player.append(cards.pop(0))
-    print(f"banker: '{banker[0]}'\nplayer: {player}")
-    player_sum = 0
-    banker_sum = 0
-    end = False
-    while not end:
-        decision = input("hit or stand? ")
-        if decision == "hit":
-            player.append(cards.pop(0))
-            print(f"banker: '{banker[0]}'\nplayer: {player}")
-            for card in player:
-                player_sum += value[card]
-            if player_sum > 21:
-                print("busted")
-                end = True
-        if decision == "stand":
-            # print(f"banker: {banker}\nplayer: {player}")
-            for card in banker:
-                    banker_sum += value[card]
-            while banker_sum <= 17:
-                banker.append(cards.pop(0))
-                banker_sum += value[banker[-1]]
-            if banker_sum > 21:
-                print(f"banker: {banker}\nplayer: {player}")
-                print("player win!")
-            if player_sum < banker_sum <= 21:
-                print(f"banker: {banker}\nplayer: {player}")
-                print("banker win!")
-            end = True
+def calculate_score(cards):
+  """Take a list of cards and return the score calculated from the cards"""
 
-def main():
-    # test()
-    end = False
-    while not end:
-        next = input("Do you want to play blackjack? y or n\n")
-        if next == 'y':
-            bj()
-        elif next == 'n':
-            end = True
+  if sum(cards) == 21 and len(cards) == 2:
+    return 0
+  if 11 in cards and sum(cards) > 21:
+    cards.remove(11)
+    cards.append(1)
+  return sum(cards)
 
-main()
+def compare(user_score, computer_score):
+  if user_score > 21 and computer_score > 21:
+    return "You went over. You lose 😤"
+
+
+  if user_score == computer_score:
+    return "Draw 🙃"
+  elif computer_score == 0:
+    return "Lose, opponent has Blackjack 😱"
+  elif user_score == 0:
+    return "Win with a Blackjack 😎"
+  elif user_score > 21:
+    return "You went over. You lose 😭"
+  elif computer_score > 21:
+    return "Opponent went over. You win 😁"
+  elif user_score > computer_score:
+    return "You win 😃"
+  else:
+    return "You lose 😤"
+
+def play_game():
+
+  user_cards = []
+  computer_cards = []
+  is_game_over = False
+
+  for _ in range(2):
+    user_cards.append(deal_card())
+    computer_cards.append(deal_card())
+
+  while not is_game_over:
+    user_score = calculate_score(user_cards)
+    computer_score = calculate_score(computer_cards)
+    print(f"   Your cards: {user_cards}, current score: {user_score}")
+    print(f"   Computer's first card: {computer_cards[0]}")
+
+    if user_score == 0 or computer_score == 0 or user_score > 21:
+      is_game_over = True
+    else:
+      user_should_deal = input("Type 'y' to get another card, type 'n' to pass: ")
+      if user_should_deal == "y":
+        user_cards.append(deal_card())
+      else:
+        is_game_over = True
+
+  while computer_score != 0 and computer_score < 17:
+    computer_cards.append(deal_card())
+    computer_score = calculate_score(computer_cards)
+
+  print(f"   Your final hand: {user_cards}, final score: {user_score}")
+  print(f"   Computer's final hand: {computer_cards}, final score: {computer_score}")
+  print(compare(user_score, computer_score))
+
+while input("Do you want to play a game of Blackjack? Type 'y' or 'n': ") == "y":
+  clear()
+  play_game()
