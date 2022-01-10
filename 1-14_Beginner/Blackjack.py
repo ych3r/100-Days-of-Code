@@ -70,6 +70,12 @@ def bj():
 
 def main():
     # test()
-    bj()
+    end = False
+    while not end:
+        next = input("Do you want to play blackjack? y or n\n")
+        if next == 'y':
+            bj()
+        elif next == 'n':
+            end = True
 
 main()
