@@ -1,0 +1,4 @@
+
+amazon | example@gmail.com | 111111
+google | example@gmail.com | 123456
+a | example@gmail.com | Ud#x!TK!#Adzo
